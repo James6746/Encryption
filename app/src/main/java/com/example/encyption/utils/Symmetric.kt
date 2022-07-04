@@ -23,7 +23,7 @@ object Symmetric {
             key = myKey.toByteArray(charset("UTF-8"))
             sha = MessageDigest.getInstance("SHA-1")
             key = sha.digest(key)
-            key = Arrays.copyOf(key, 16)
+            key = key.copyOf(16)
             secretKeySpec = SecretKeySpec(key, "AES")
         } catch (e: NoSuchAlgorithmException) {
             e.printStackTrace()
@@ -44,7 +44,10 @@ object Symmetric {
                         (strToEncrypt.toByteArray(charset("UTF-8")))
                 )
             } else {
-                TODO("VERSION.SDK_INT < O")
+                android.util.Base64.encodeToString(
+                    cipher.doFinal(strToEncrypt.toByteArray(charset("UTF-8"))),
+                    android.util.Base64.DEFAULT
+                )
             }
         } catch (e: Exception) {
 
@@ -66,7 +69,14 @@ object Symmetric {
                     )
                 )
             } else {
-                TODO("VERSION.SDK_INT < O")
+                String(
+                    cipher.doFinal(
+                        android.util.Base64.decode(
+                            strToDecrypt,
+                            android.util.Base64.DEFAULT
+                        )
+                    )
+                )
             }
         } catch (e: Exception) {
             println("Error while decrypting: $e")
